@@ -1,0 +1,146 @@
+﻿@model WebApplication3.Models.ViewModel
+
+@{
+    ViewData["Title"] = "Randevu Takvimi";
+}
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Moment.js -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/locale/tr.js"></script>
+
+
+<!-- FullCalendar -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" integrity="sha512-KXkS7cFeWpYwcoXxyfOumLyRGXMp7BTMTjwrgjMg0+hls4thG2JGzRgQtRfnAuKTn2KWTDZX4UdPg+xTs8k80Q==" crossorigin="anonymous" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/locale/tr.js"></script>
+
+
+<div id="calendar"></div>
+
+<script>
+    var randevular = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+
+    console.log("Randevular listesi:", randevular);
+    var events = randevular.RandevuListesi.map(function (randevu) {
+        // UyeID'ye göre Uyeler listesinden ilgili üyenin bulunması
+        var uyelerListesi = randevular.UyelerListesi.filter(function (uye) {
+            return uye.UyeID === randevu.UyeID;
+        });
+
+        // Eğer üye bulunduysa, UyeAdi ve UyeSoyadi bilgilerini al
+        var uyeadSoyad = "";
+        if (uyelerListesi.length > 0) {
+            uyeadSoyad = uyelerListesi[0].UyeAdi + " " + uyelerListesi[0].UyeSoyadi;
+            uyetelNo = uyelerListesi[0].UyeTelNo;
+        }
+
+        return {
+            title: uyeadSoyad + "\n" + uyetelNo, // UyeAdi ve UyeSoyadi'nin kullanılması
+            start: randevu.RandevuBaslangicTarihi,
+            end: moment(randevu.RandevuBaslangicTarihi).add(randevu.RandevuHizmetSuresi, 'minutes').toISOString(),
+            allDay: false
+        };
+    });
+
+
+    $(document).ready(function () {
+        // FullCalendar'ı başlatma
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            defaultView: 'agendaDay',
+            defaultDate: new Date(),
+            editable: false,
+            businessHours: {
+                // Hafta içi günleri (Pazartesi-Cuma) 7:00 - 12:00 arasında çalışır
+                dow: [1, 2, 3, 4, 5], // Pazartesi'den Cuma'ya kadar
+                start: '07:00',       // Başlangıç saati
+                end: '23:59'          // Bitiş saati
+            },
+            minTime: '07:00', // Minimum saat
+            maxTime: '23:59', // Maksimum saat
+            events: events,  // events özelliğine randevular dizisini ekle
+            eventRender: function (event, element) {
+                // Saat formatını 12 saatlik formata dönüştürme
+                var startDate = moment(event.start).format('YYYY-MM-DD hh:mm');
+                element.find('.fc-time').html(startDate);
+            },
+            // Türkiye saat dilimini ayarlama
+            timezone: 'Europe/Istanbul',
+            buttonText: {
+                today: 'Bugün',
+                month: 'Ay',
+                week: 'Hafta',
+                day: 'Gün'
+            },
+            eventColor: '#3498db', // Randevu rengi
+            eventTextColor: '#fff' // Randevu yazı rengi
+        });
+    });
+</script>
+
+
+
+<style>
+    #calendar {
+        max-width: 100%;
+        margin: 10px 0;
+        background-color: #ffffff; /* Takvim arka plan rengi */
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        height: 95vh; /* Ekran yüksekliğinin 90% 'i */
+        overflow-y: auto; /* Takvim içindeki kaydırma çubuğunu göster */
+    }
+
+    body {
+        overflow: hidden; /* Sayfa genelindeki ana kaydırma çubuğunu devre dışı bırak */
+    }
+
+    .fc-toolbar {
+        background-color: #343a40;
+        color: #ffffff;
+        border: none;
+    }
+
+    .fc-toolbar-button {
+        background-color: #343a40;
+        color: #ffffff;
+    }
+
+    .fc-button-group {
+        border: none;
+    }
+
+    .fc-button.fc-state-active {
+        background-color: #555d66;
+    }
+
+    .fc-today {
+        background-color: #f0ad4e;
+        border: 1px solid #f0ad4e;
+    }
+
+    .fc-event, .fc-agenda .fc-event-time, .fc-event-title {
+        background-color: #5bc0de;
+        border-color: #5bc0de;
+        color: #ffffff;
+    }
+
+        .fc-event:hover {
+            background-color: #4cae4c;
+            border-color: #4cae4c;
+            color: #ffffff;
+        }
+
+    .fc-axis {
+        background-color: #d9534f;
+        color: #ffffff;
+    }
+</style>
+

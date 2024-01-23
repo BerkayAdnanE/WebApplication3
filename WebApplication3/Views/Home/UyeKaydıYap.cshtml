@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div style="margin: 50px 100px;">
+    <h4 class="mb-3">Üye Bilgileri</h4>
+    <form class="needs-validation" novalidate="" action="~/Home/UyeKaydıYap" method="post" enctype="multipart/form-data">
+        <div class="row g-3">
+
+            <div class="col-sm-6">
+                <label for="UyeAdi" class="form-label">Adı *</label>
+                <input type="text" class="form-control" name="UyeAdi" id="firstName" placeholder="Üye adı giriniz..." required >
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeSoyadi" class="form-label">Soyadı *</label>
+                <input type="text" class="form-control" name="UyeSoyadi" placeholder="Üye soyadı giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeTelNo" class="form-label">Telefon Numarası *</label>
+                <input type="text" class="form-control" name="UyeTelNo" placeholder="Üye telefon numarası giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeTcNo" class="form-label">TC. Kimlik No</label>
+                <input type="text" class="form-control" name="UyeTcNo" placeholder="Üye TC. kimlik numarası giriniz...">
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeMaili" class="form-label">E-Posta Adresi</label>
+                <input type="text" class="form-control" name="UyeMaili" placeholder="Üye e-posta adresi giriniz...">
+            </div>
+
+            <div class="col-12">
+                <label for="UyeOzelNotu" class="form-label">Not & Açıklama</label>
+                <input type="text" class="form-control" name="UyeOzelNotu" placeholder="Not & Açıklama not giriniz...">
+            </div>
+
+            <hr class="my-4">
+        </div>
+        <button class="w-150 btn btn-warning" type="submit" style="right: 40px">Üye Kaydını Tamamla</button>
+    </form>
+</div>

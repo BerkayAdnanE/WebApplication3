@@ -1,0 +1,321 @@
+﻿@model List<WebApplication3.Models.Uyeler>
+
+@{
+    ViewBag.Title = "Uyeler";
+}
+
+<div style="margin:25px 0px;">
+    <div>
+        <a name="editBtn" id="editBtn" class="nav-link text-white d-inline-block" style="cursor:pointer;">
+            <svg class="bi pe-none me-2" width="20" height="20">
+                <use xlink:href="#edit"></use>
+            </svg>
+        </a>
+        <a name="pasifBtn" id="pasifBtn" class="nav-link text-white d-inline-block" style="cursor:pointer;">
+            <svg class="bi pe-none me-2" width="20" height="20">
+                <use xlink:href="#passive"></use>
+            </svg>
+        </a>
+        <a name="aktifBtn" id="aktifBtn" class="nav-link text-white d-inline-block" style="cursor:pointer;">
+            <svg class="bi pe-none me-2" width="20" height="20">
+                <use xlink:href="#active"></use>
+            </svg>
+        </a>
+        <form id="filterForm d-inline-block">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="chkSysAktif" onclick="filterTable()">
+                <label class="form-check-label" for="chkSysAktif">Pasif Üyeleri Göster</label>
+            </div>
+        </form>
+
+    </div>
+
+    <table class="table table-dark table-hover" id="uyelerTable" style="margin:15px 0px;">
+        <thead>
+            <tr>
+                <th>Adı</th>
+                <th>Soyadi</th>
+                <th>Telefon Numarası</th>
+                <th>TC. Kimlik Numarası</th>
+                <th>Mail Adresi</th>
+                <th>Özel Not</th>
+            </tr>
+        </thead>
+        <tbody style="cursor:pointer;">
+            @foreach (var uye in Model)
+            {
+                <tr data-sysaktif="@uye.SysAktif">
+                    <td hidden>@uye.UyeID</td>
+                    <td>@uye.UyeAdi</td>
+                    <td>@uye.UyeSoyadi</td>
+                    <td>@uye.UyeTelNo</td>
+                    <td>@uye.UyeTcNo</td>
+                    <td>@uye.UyeMaili</td>
+                    <td>@uye.UyeOzelNotu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<form id="editForm" action="~/Home/Uyeler" method="post" enctype="multipart/form-data">
+    <div id="editPopup" class="popup">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <h2>Edit Form</h2>
+
+        <div class="row g-3">
+
+            <input type="hidden" id="UyeID" name="UyeID">
+
+            <div class="col-sm-6">
+                <label for="UyeAdi" class="form-label">Adı *</label>
+                <input type="text" class="form-control" name="UyeAdi" id="UyeAdi" placeholder="Üye adı giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeSoyadi" class="form-label">Soyadı *</label>
+                <input type="text" class="form-control" name="UyeSoyadi" id="UyeSoyadi" placeholder="Üye soyadı giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeTelNo" class="form-label">Telefon Numarası *</label>
+                <input type="text" class="form-control" name="UyeTelNo" id="UyeTelNo" placeholder="Üye telefon numarası giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeTcNo" class="form-label">TC. Kimlik No</label>
+                <input type="text" class="form-control" name="UyeTcNo" id="UyeTcNo" placeholder="Üye TC. kimlik numarası giriniz...">
+            </div>
+
+            <div class="col-sm-6">
+                <label for="UyeMaili" class="form-label">E-Posta Adresi</label>
+                <input type="text" class="form-control" name="UyeMaili" id="UyeMaili" placeholder="Üye e-posta adresi giriniz...">
+            </div>
+
+            <div class="col-12">
+                <label for="UyeOzelNotu" class="form-label">Not & Açıklama</label>
+                <input type="text" class="form-control" name="UyeOzelNotu" id="UyeOzelNotu" placeholder="Not & Açıklama not giriniz...">
+            </div>
+
+            <hr class="my-4">
+        </div>
+        <button class="w-150 btn btn-warning" type="submit" style="right: 40px">Üye Kaydını Güncelle</button>
+
+    </div>
+</form>
+<div class="modal" tabindex="-1" role="dialog" id="confirmationModalPasif">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Onay</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bu kaydı silmek istediğinize emin misiniz?
+            </div>
+            <div class="modal-footer">
+                <form action="~/Home/UyelerPasif" method="post">
+                    <input type="hidden" id="UyeIDPasif" name="UyeID">
+                    <button type="submit" class="btn btn-primary">Evet</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hayır</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="confirmationModalAktif">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Onay</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bu kaydı aktif etmek istediğinize emin misiniz?
+            </div>
+            <div class="modal-footer">
+                <form action="~/Home/UyelerAktif" method="post">
+                    <!-- UyeID yerine UyeIDAktif olarak değiştirildi -->
+                    <input type="hidden" id="UyeIDAktif" name="UyeID">
+                    <button type="submit" class="btn btn-primary">Evet</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hayır</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    window.onload = function () {
+        filterTable(); // Sayfa yüklendiğinde filtrelemeyi başlat
+    };
+
+    function filterTable() {
+        var chkSysAktif = document.getElementById('chkSysAktif');
+        var uyelerTable = document.getElementById('uyelerTable');
+
+        var rows = uyelerTable.getElementsByTagName('tr');
+
+        for (var i = 1; i < rows.length; i++) {
+            var sysAktifCell = rows[i].dataset.sysaktif; // data-sysaktif attribute'ünden değeri al
+            var sysAktifValue = parseInt(sysAktifCell);
+
+            rows[i].style.display = chkSysAktif.checked ? (sysAktifValue === 0 ? '' : 'none') : (sysAktifValue === 1 ? '' : 'none');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var uyelerTable = document.getElementById('uyelerTable');
+
+        uyelerTable.addEventListener('click', function (event) {
+            var target = event.target;
+
+            // Tıklanan element bir <td> hücresi ise üst satırı (tr) al
+            var selectedRow = target.tagName === 'TD' ? target.parentElement : target;
+
+            // Satırın önceki seçili olma durumunu temizle
+            var previousSelectedRow = uyelerTable.querySelector('.selected-row');
+            if (previousSelectedRow) {
+                previousSelectedRow.classList.remove('selected-row');
+                previousSelectedRow.style.backgroundColor = ''; // Önceki satırın rengini sıfırla
+            }
+
+            // Tıklanan satırı seçili yap
+            selectedRow.classList.add('selected-row');
+        });
+
+        var editBtn = document.getElementById('editBtn');
+        if (editBtn) {
+            editBtn.addEventListener('click', function () {
+                editRow();
+            });
+        } else {
+            console.error('editBtn id\'sine sahip bir HTML öğesi bulunamadı.');
+        }
+
+        var pasifBtn = document.getElementById('pasifBtn');
+        var confirmationModalPasif = new bootstrap.Modal(document.getElementById('confirmationModalPasif'));
+
+        if (pasifBtn && confirmationModalPasif) {
+            pasifBtn.addEventListener('click', function () {
+                // Onay modal'ını göster
+                setSelectedUyeID(); // Seçili UyeID'yi ayarla
+                confirmationModalPasif.show();
+            });
+        } else {
+            console.error('pasifBtn veya confirmationModalPasif bulunamadı.');
+        }
+
+        var aktifBtn = document.getElementById('aktifBtn');
+        var confirmationModalAktif = new bootstrap.Modal(document.getElementById('confirmationModalAktif'));
+
+        if (aktifBtn && confirmationModalAktif) {
+            aktifBtn.addEventListener('click', function () {
+                // Onay modal'ını göster
+                setSelectedUyeID(); // Seçili UyeID'yi ayarla
+                confirmationModalAktif.show();
+            });
+        } else {
+            console.error('aktifBtn veya confirmationModalAktif bulunamadı.');
+        }
+    });
+
+    function editRow() {
+        var selectedRow = document.querySelector('.selected-row');
+
+        if (selectedRow) {
+            // Seçili satırdaki üye bilgilerini al
+            var uyeID = selectedRow.cells[0].innerText;
+            var uyeAdi = selectedRow.cells[1].innerText;
+            var uyeSoyadi = selectedRow.cells[2].innerText;
+            var uyeTelNo = selectedRow.cells[3].innerText;
+            var uyeTCNo = selectedRow.cells[4].innerText;
+            var uyeMaili = selectedRow.cells[5].innerText;
+            var uyeOzelNot = selectedRow.cells[6].innerText;
+
+            // Inputları doldur
+            document.getElementById('UyeID').value = uyeID;
+            document.getElementById('UyeAdi').value = uyeAdi;
+            document.getElementById('UyeSoyadi').value = uyeSoyadi;
+            document.getElementById('UyeTelNo').value = uyeTelNo;
+            document.getElementById('UyeTcNo').value = uyeTCNo;
+            document.getElementById('UyeMaili').value = uyeMaili;
+            document.getElementById('UyeOzelNotu').value = uyeOzelNot;
+
+            // Popup'ı görünür yap
+            var popup = document.getElementById('editPopup');
+            popup.style.display = 'block';
+        } else {
+            console.error('Lütfen bir satır seçin.');
+        }
+    }
+
+    function closePopup() {
+        var popup = document.getElementById('editPopup');
+        popup.style.display = 'none';
+    }
+
+    // UyeID değerini gizli alana atayan fonksiyon
+    function setSelectedUyeID() {
+        var selectedRow = document.querySelector('.selected-row');
+
+        if (selectedRow) {
+            // Seçili satırdaki UyeID değerini al
+            var uyeID = selectedRow.cells[0].innerText;
+
+            // Gizli alana atama
+            document.getElementById('UyeIDAktif').value = uyeID;
+            document.getElementById('UyeIDPasif').value = uyeID;
+        } else {
+            console.error('Lütfen bir satır seçin.');
+        }
+    }
+
+</script>
+
+
+
+
+<style>
+    .selected-row {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #ccc;
+        padding: 15px;
+        background: #fff;
+        z-index: 1;
+    }
+
+        .popup h2 {
+            margin-bottom: 15px;
+        }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    tr.selected {
+        background-color: #a5d8ff; /* İstediğiniz rengi burada belirtin */
+    }
+</style>

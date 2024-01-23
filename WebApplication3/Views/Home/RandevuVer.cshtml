@@ -1,0 +1,260 @@
+﻿<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+<!-- Tempus Dominus CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css">
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- DateTimePicker CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css">
+
+<!-- DateTimePicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/tr.js"></script>
+
+
+@{
+    ViewBag.Title = "RandevuVer";
+
+}
+
+
+<div style="margin: 50px 100px;">
+    <form class="needs-validation" novalidate="" action="~/Home/RandevuVer" method="post" enctype="multipart/form-data">
+        <div class="row g-3">
+
+            <h2>Randevu Ver</h2>
+
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <label for="datetimePicker">Üye Seçimi</label>
+                    @Html.DropDownList("UyeID", ViewBag.Uyeler as SelectList, new { @class = "form-control" })
+                </div>
+            </div>
+
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="datetimePicker">Tarih ve Saat Seçimi</label>
+                    <div class="input-group date" id="datetimePicker" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#datetimePicker" name="RandevuBaslangicTarihi" />
+                        <div class="input-group-append" data-target="#datetimePicker" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <label for="datetimePicker">Hizmet Süresi</label>
+                <input type="text" class="form-control" name="RandevuHizmetSuresi" placeholder="Örnek 120">
+                <label for="datetimePicker">*Dakika Cisinden*</label>
+            </div>
+
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>Hizmetler</label>
+                    <div class="custom-checkbox-group">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="ChckBxSecimleri" value="Saç Kesimi ve Modellendirme">
+                            <span class="checkmark"></span> Saç Kesimi ve Modellendirme
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="ChckBxSecimleri" value="Saç Boyama">
+                            <span class="checkmark"></span> Saç Boyama
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="ChckBxSecimleri" value="Perma ve Dalgalı Saçlar">
+                            <span class="checkmark"></span> Perma ve Dalgalı Saçlar
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>&nbsp;</label> <!-- Boş bir label ekleyerek alttaki checkbox'ları hizalamak için -->
+                    <div class="custom-checkbox-group">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="ChckBxSecimleri" value="Saç Bakımı ve Tedavileri">
+                            <span class="checkmark"></span> Saç Bakımı ve Tedavileri
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="ChckBxSecimleri" value="Saç Uzatma ve Eklemeler">
+                            <span class="checkmark"></span> Saç Uzatma ve Eklemeler
+                        </label>
+                        <label class="custom-checkbox">
+                            <input type="checkbox" name="ChckBxSecimleri" value="Kaş ve Kirpik Bakımı">
+                            <span class="checkmark"></span> Kaş ve Kirpik Bakımı
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <label>&nbsp;</label> <!-- Boş bir label ekleyerek alttaki checkbox'ları hizalamak için -->
+                <div class="custom-checkbox-group">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="ChckBxSecimleri" value="Makyaj Uygulamaları">
+                        <span class="checkmark"></span> Makyaj Uygulamaları
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="ChckBxSecimleri" value="Manikür ve Pedikür">
+                        <span class="checkmark"></span> Manikür ve Pedikür
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="ChckBxSecimleri" value="Saç Analizi ve Danışmanlık">
+                        <span class="checkmark"></span> Saç Analizi ve Danışmanlık
+                    </label>
+                </div>
+            </div>
+            <div class="col-12">
+                <label for="NotAciklama" class="form-label">Not & Açıklama</label>
+                <input style="height:120px;" type="text" class="form-control" name="NotAciklama" placeholder="Not & Açıklama not giriniz...">
+            </div>
+            <button class="buttonsbmt" type="submit" onclick="submitForm()">Randevu Oluştur</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#datetimePicker').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',  // Tarih ve saat formatı
+            locale: 'tr',  // Türkçe dilini kullan
+            icons: {
+                time: 'fa fa-clock',
+                date: 'fa fa-calendar',
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right',
+                today: 'fa fa-crosshairs',
+                clear: 'fa fa-trash',
+                close: 'fa fa-times'
+            }
+        });
+    });
+
+    function submitForm() {
+        var ChckBxSecimleri = [];
+        var checkboxes = document.querySelectorAll('input[name="services"]:checked');
+
+        checkboxes.forEach(function (checkbox) {
+            ChckBxSecimleri.push(checkbox.value);
+        });
+
+        var combinedValue = ChckBxSecimleri.join(', ');
+        console.log("Seçilen hizmetler: " + combinedValue);
+        // Burada değeri bir yerde kullanabilir veya formu gönderebilirsiniz
+    }
+</script>
+
+
+<style>
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 12px;
+        cursor: pointer;
+    }
+
+    .custom-checkbox-group {
+    }
+
+        .custom-checkbox-group label {
+            margin-bottom: 10px; /* Checkbox'lar arasındaki boşluğu ayarlayın */
+            display: block; /* Her checkbox'ı yeni bir satıra yerleştirin */
+        }
+
+    input[type="checkbox"] {
+        display: none; /* Orijinal checkbox'ı gizle */
+    }
+
+    .custom-checkbox {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+        line-height: 20px;
+        display: inline-block;
+    }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee;
+        border-radius: 4px;
+    }
+
+    .custom-checkbox:hover .checkmark {
+        background-color: #ccc;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+        background-color: #4CAF50;
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    .custom-checkbox .checkmark:after {
+        left: 7px;
+        top: 3px;
+        width: 6px;
+        height: 12px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .buttonsbmt {
+        width: 400px;
+        padding: 10px;
+        margin-top: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .buttonsbmt:hover {
+            background-color: #45a049;
+        }
+</style>
