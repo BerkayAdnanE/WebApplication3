@@ -7,18 +7,68 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-<!-- Moment.js -->
-<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/locale/tr.js"></script>
-
-
 <!-- FullCalendar -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" integrity="sha512-KXkS7cFeWpYwcoXxyfOumLyRGXMp7BTMTjwrgjMg0+hls4thG2JGzRgQtRfnAuKTn2KWTDZX4UdPg+xTs8k80Q==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment-timezone@0.5.33/moment-timezone.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/locale/tr.js"></script>
 
 
+
 <div id="calendar"></div>
+
+<form id="editForm" action="~/Home/HizmetGuncelle" method="post" enctype="multipart/form-data">
+    <div id="editPopup" class="popup">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <h2>Edit Form</h2>
+
+        <div class="row g-3">
+
+            <input type="hidden" id="Id" name="Id">
+
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="datetimePicker">Tarih ve Saat Seçimi</label>
+                    <div class="input-group date" id="datetimePicker" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#datetimePicker" id="RandevuBaslangicTarihi" name="RandevuBaslangicTarihi" />
+                        <div class="input-group-append" data-target="#datetimePicker" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="HizmetBedeli" class="form-label">Hizmet Bedeli *</label>
+                <input type="number" class="form-control" name="HizmetBedeli" id="EditHizmetBedeli" max="999999" placeholder="Hizmet Bedeli giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="HizmetAdi" class="form-label">Hizmet Adı *</label>
+                <input type="text" class="form-control" name="HizmetAdi" id="EditHizmetAdi" maxlength="50" placeholder="Hizmet adı giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="HizmetBedeli" class="form-label">Hizmet Bedeli *</label>
+                <input type="number" class="form-control" name="HizmetBedeli" id="EditHizmetBedeli" max="999999" placeholder="Hizmet Bedeli giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <hr class="my-4">
+        </div>
+        <button class="w-150 btn btn-warning" type="submit" style="right: 40px">Hizmet Kaydını Güncelle</button>
+
+    </div>
+</form>
 
 <script>
     var randevular = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
@@ -39,8 +89,8 @@
 
         return {
             title: uyeadSoyad + "\n" + uyetelNo, // UyeAdi ve UyeSoyadi'nin kullanılması
-            start: randevu.RandevuBaslangicTarihi,
-            end: moment(randevu.RandevuBaslangicTarihi).add(randevu.RandevuHizmetSuresi, 'minutes').toISOString(),
+            start: moment(randevu.RandevuBaslangicTarihi).tz('Europe/Istanbul').format(),
+            end: moment(randevu.RandevuBaslangicTarihi).tz('Europe/Istanbul').add(60, 'minutes').format(),
             allDay: false
         };
     });
@@ -67,10 +117,11 @@
             maxTime: '23:59', // Maksimum saat
             events: events,  // events özelliğine randevular dizisini ekle
             eventRender: function (event, element) {
-                // Saat formatını 12 saatlik formata dönüştürme
-                var startDate = moment(event.start).format('YYYY-MM-DD hh:mm');
+                // Saat formatını 24 saatlik formata dönüştürme ve Türkçe saat dilimine çevirme
+                var startDate = moment(event.start).tz('Europe/Istanbul').format('YYYY-MM-DD HH:mm');
                 element.find('.fc-time').html(startDate);
             },
+
             // Türkiye saat dilimini ayarlama
             timezone: 'Europe/Istanbul',
             buttonText: {
@@ -83,14 +134,64 @@
             eventTextColor: '#fff' // Randevu yazı rengi
         });
     });
+
+
+
+
+
+
+
+
+    function editRow() {
+        var selectedRow = document.querySelector('.selected-row');
+
+        if (selectedRow) {
+            // Seçili satırdaki üye bilgilerini al     
+
+            // Popup'ı görünür yap
+            var popup = document.getElementById('editPopup');
+            popup.style.display = 'block';
+        } else {
+            console.error('Lütfen bir satır seçin.');
+        }
+    }
+
+    function closePopup() {
+        var popup = document.getElementById('editPopup');
+        popup.style.display = 'none';
+    }
 </script>
 
 
 
 <style>
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #ccc;
+        padding: 15px;
+        background: #fff;
+        z-index: 1;
+    }
+
+        .popup h2 {
+            margin-bottom: 15px;
+        }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+    
     #calendar {
         max-width: 100%;
-        margin: 10px 0;
+        margin: 20px 0;
         background-color: #ffffff; /* Takvim arka plan rengi */
         border-radius: 8px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -130,6 +231,7 @@
         background-color: #5bc0de;
         border-color: #5bc0de;
         color: #ffffff;
+        cursor: pointer;
     }
 
         .fc-event:hover {

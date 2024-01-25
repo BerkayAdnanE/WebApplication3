@@ -160,6 +160,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Context.cs" />
+    <Compile Include="Models\HizmetEkle.cs" />
     <Compile Include="Models\Randevu.cs" />
     <Compile Include="Models\Uyeler.cs" />
     <Compile Include="Models\ViewModel.cs" />
@@ -230,6 +231,7 @@
     <Content Include="Scripts\moment.min.js.map" />
     <Content Include="Scripts\moment-with-locales.min.js.map" />
     <Content Include="Views\Home\RandevuVer.cshtml" />
+    <Content Include="Views\Home\HizmetEkle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,8 +1,40 @@
-﻿@model List<WebApplication3.Models.Uyeler>
+﻿@model List<WebApplication3.Models.HizmetEkle>
 
 @{
-    ViewBag.Title = "Uyeler";
+    ViewBag.Title = "HizmetEkle";
 }
+
+
+
+<div style="margin: 50px 100px;">
+    <h4 class="mb-3">Hizmet Kaydı</h4>
+    <form class="needs-validation" novalidate="" action="~/Home/HizmetEkle" method="post" enctype="multipart/form-data">
+        <div class="row g-3">
+
+            <div class="col-sm-6">
+                <label for="HizmetAdi" class="form-label">Hizmet Adı *</label>
+                <input type="text" class="form-control" name="HizmetAdi" id="HizmetAdi" maxlength="50" placeholder="Hizmet adı giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <label for="HizmetBedeli" class="form-label">Hizmet Bedeli *</label>
+                <input type="number" class="form-control" name="HizmetBedeli" id="HizmetBedeli" max="999999" placeholder="Hizmet bedeli giriniz..." required>
+                <div class="invalid-feedback">
+                    Boş geçmeyiniz...
+                </div>
+            </div>
+
+            <hr class="my-4">
+        </div>
+        <button class="w-150 btn btn-warning" type="submit" style="right: 40px">Hizmet Kaydını Sisteme Tanımla</button>
+    </form>
+</div>
+
+
+
 
 <div style="margin:25px 0px;">
     <div>
@@ -30,84 +62,59 @@
 
     </div>
 
-    <table class="table table-dark table-hover" id="uyelerTable" style="margin:15px 0px;">
+    <table class="table table-dark table-hover" id="hizmetlerTable" style="margin:15px 0px;">
         <thead>
             <tr>
-                <th>Adı</th>
-                <th>Soyadi</th>
-                <th>Telefon Numarası</th>
-                <th>TC. Kimlik Numarası</th>
-                <th>Mail Adresi</th>
-                <th>Özel Not</th>
+                <th>Hizmet</th>
+                <th>Bedeli</th>
+                <th>Hizmet Güncellenme Tarihi</th>
+                <th>Hizmet Güncelleyen Personel</th>
             </tr>
         </thead>
         <tbody style="cursor:pointer;">
-            @foreach (var uye in Model)
+
+            @foreach (var HizmetEkle in Model)
             {
-                <tr data-sysaktif="@uye.SysAktif">
-                    <td hidden>@uye.UyeID</td>
-                    <td>@uye.UyeAdi</td>
-                    <td>@uye.UyeSoyadi</td>
-                    <td>@uye.UyeTelNo</td>
-                    <td>@uye.UyeTcNo</td>
-                    <td>@uye.UyeMaili</td>
-                    <td>@uye.UyeOzelNotu</td>
+                <tr data-sysaktif="@HizmetEkle.SysAktif">
+                    <td hidden>@HizmetEkle.Id</td>
+                    <td>@HizmetEkle.HizmetAdi</td>
+                    <td>@HizmetEkle.HizmetBedeli</td>
+                    <td>@HizmetEkle.HizmetGuncellenmeTarihi</td>
+                    <td>@HizmetEkle.HizmetGuncelleyenPersonel</td>
                 </tr>
             }
+
         </tbody>
     </table>
 </div>
-<form id="editForm" action="~/Home/Uyeler" method="post" enctype="multipart/form-data">
+<form id="editForm" action="~/Home/HizmetGuncelle" method="post" enctype="multipart/form-data">
     <div id="editPopup" class="popup">
         <span class="close" onclick="closePopup()">&times;</span>
         <h2>Edit Form</h2>
 
         <div class="row g-3">
 
-            <input type="hidden" id="UyeID" name="UyeID">
+            <input type="hidden" id="EditId" name="Id">
 
             <div class="col-sm-6">
-                <label for="UyeAdi" class="form-label">Adı *</label>
-                <input type="text" class="form-control" name="UyeAdi" id="UyeAdi" maxlength="30" placeholder="Üye adı giriniz..." required>
+                <label for="HizmetAdi" class="form-label">Hizmet Adı *</label>
+                <input type="text" class="form-control" name="HizmetAdi" id="EditHizmetAdi" maxlength="50" placeholder="Hizmet adı giriniz..." required>
                 <div class="invalid-feedback">
                     Boş geçmeyiniz...
                 </div>
             </div>
 
             <div class="col-sm-6">
-                <label for="UyeSoyadi" class="form-label">Soyadı *</label>
-                <input type="text" class="form-control" name="UyeSoyadi" id="UyeSoyadi" maxlength="30" placeholder="Üye soyadı giriniz..." required>
+                <label for="HizmetBedeli" class="form-label">Hizmet Bedeli *</label>
+                <input type="number" class="form-control" name="HizmetBedeli" id="EditHizmetBedeli" max="999999" placeholder="Hizmet Bedeli giriniz..." required>
                 <div class="invalid-feedback">
                     Boş geçmeyiniz...
                 </div>
-            </div>
-
-            <div class="col-sm-6">
-                <label for="UyeTelNo" class="form-label">Telefon Numarası *</label>
-                <input type="text" class="form-control" name="UyeTelNo" id="UyeTelNo" maxlength="11" placeholder="Üye telefon numarası giriniz..." required>
-                <div class="invalid-feedback">
-                    Boş geçmeyiniz...
-                </div>
-            </div>
-
-            <div class="col-sm-6">
-                <label for="UyeTcNo" class="form-label">TC. Kimlik No</label>
-                <input type="text" class="form-control" name="UyeTcNo" id="UyeTcNo" maxlength="11" placeholder="Üye TC. kimlik numarası giriniz...">
-            </div>
-
-            <div class="col-sm-6">
-                <label for="UyeMaili" class="form-label">E-Posta Adresi</label>
-                <input type="text" class="form-control" name="UyeMaili" id="UyeMaili" maxlength="50" placeholder="Üye e-posta adresi giriniz...">
-            </div>
-
-            <div class="col-12">
-                <label for="UyeOzelNotu" class="form-label">Not & Açıklama</label>
-                <input type="text" class="form-control" name="UyeOzelNotu" id="UyeOzelNotu" maxlength="150" placeholder="Not & Açıklama not giriniz...">
             </div>
 
             <hr class="my-4">
         </div>
-        <button class="w-150 btn btn-warning" type="submit" style="right: 40px">Üye Kaydını Güncelle</button>
+        <button class="w-150 btn btn-warning" type="submit" style="right: 40px">Hizmet Kaydını Güncelle</button>
 
     </div>
 </form>
@@ -122,8 +129,8 @@
                 Bu kaydı silmek istediğinize emin misiniz?
             </div>
             <div class="modal-footer">
-                <form action="~/Home/UyelerPasif" method="post">
-                    <input type="hidden" id="UyeIDPasif" name="UyeID">
+                <form action="~/Home/HizmetPasif" method="post">
+                    <input type="hidden" id="HizmetIDPasif" name="Id">
                     <button type="submit" class="btn btn-primary">Evet</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hayır</button>
                 </form>
@@ -143,9 +150,9 @@
                 Bu kaydı aktif etmek istediğinize emin misiniz?
             </div>
             <div class="modal-footer">
-                <form action="~/Home/UyelerAktif" method="post">
+                <form action="~/Home/HizmetAktif" method="post">
                     <!-- UyeID yerine UyeIDAktif olarak değiştirildi -->
-                    <input type="hidden" id="UyeIDAktif" name="UyeID">
+                    <input type="hidden" id="HizmetIDAktif" name="Id">
                     <button type="submit" class="btn btn-primary">Evet</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hayır</button>
                 </form>
@@ -162,9 +169,9 @@
 
     function filterTable() {
         var chkSysAktif = document.getElementById('chkSysAktif');
-        var uyelerTable = document.getElementById('uyelerTable');
+        var hizmetlerTable = document.getElementById('hizmetlerTable');
 
-        var rows = uyelerTable.getElementsByTagName('tr');
+        var rows = hizmetlerTable.getElementsByTagName('tr');
 
         for (var i = 1; i < rows.length; i++) {
             var sysAktifCell = rows[i].dataset.sysaktif; // data-sysaktif attribute'ünden değeri al
@@ -175,16 +182,16 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        var uyelerTable = document.getElementById('uyelerTable');
+        var hizmetlerTable = document.getElementById('hizmetlerTable');
 
-        uyelerTable.addEventListener('click', function (event) {
+        hizmetlerTable.addEventListener('click', function (event) {
             var target = event.target;
 
             // Tıklanan element bir <td> hücresi ise üst satırı (tr) al
             var selectedRow = target.tagName === 'TD' ? target.parentElement : target;
 
             // Satırın önceki seçili olma durumunu temizle
-            var previousSelectedRow = uyelerTable.querySelector('.selected-row');
+            var previousSelectedRow = hizmetlerTable.querySelector('.selected-row');
             if (previousSelectedRow) {
                 previousSelectedRow.classList.remove('selected-row');
                 previousSelectedRow.style.backgroundColor = ''; // Önceki satırın rengini sıfırla
@@ -235,22 +242,16 @@
 
         if (selectedRow) {
             // Seçili satırdaki üye bilgilerini al
-            var uyeID = selectedRow.cells[0].innerText;
-            var uyeAdi = selectedRow.cells[1].innerText;
-            var uyeSoyadi = selectedRow.cells[2].innerText;
-            var uyeTelNo = selectedRow.cells[3].innerText;
-            var uyeTCNo = selectedRow.cells[4].innerText;
-            var uyeMaili = selectedRow.cells[5].innerText;
-            var uyeOzelNot = selectedRow.cells[6].innerText;
+            var Id = selectedRow.cells[0].innerText;
+            var hizmetAdi = selectedRow.cells[1].innerText;
+            var hizmetBedeli = selectedRow.cells[2].innerText;
+
+            console.log(Id, hizmetAdi, hizmetBedeli);
 
             // Inputları doldur
-            document.getElementById('UyeID').value = uyeID;
-            document.getElementById('UyeAdi').value = uyeAdi;
-            document.getElementById('UyeSoyadi').value = uyeSoyadi;
-            document.getElementById('UyeTelNo').value = uyeTelNo;
-            document.getElementById('UyeTcNo').value = uyeTCNo;
-            document.getElementById('UyeMaili').value = uyeMaili;
-            document.getElementById('UyeOzelNotu').value = uyeOzelNot;
+            document.getElementById('EditId').value = Id;
+            document.getElementById('EditHizmetAdi').value = hizmetAdi;
+            document.getElementById('EditHizmetBedeli').value = hizmetBedeli;
 
             // Popup'ı görünür yap
             var popup = document.getElementById('editPopup');
@@ -271,11 +272,11 @@
 
         if (selectedRow) {
             // Seçili satırdaki UyeID değerini al
-            var uyeID = selectedRow.cells[0].innerText;
+            var Id = selectedRow.cells[0].innerText;
 
             // Gizli alana atama
-            document.getElementById('UyeIDAktif').value = uyeID;
-            document.getElementById('UyeIDPasif').value = uyeID;
+            document.getElementById('HizmetIDAktif').value = Id;
+            document.getElementById('HizmetIDPasif').value = Id;
         } else {
             console.error('Lütfen bir satır seçin.');
         }
@@ -319,3 +320,4 @@
         background-color: #a5d8ff; /* İstediğiniz rengi burada belirtin */
     }
 </style>
+

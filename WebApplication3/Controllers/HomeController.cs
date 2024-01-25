@@ -10,14 +10,15 @@ using System.Web.Mvc;
 using WebApplication3.Models;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Infrastructure;
+using System.Reflection;
+using System.Web.UI.WebControls;
 
 namespace WebApplication3.Controllers
 {
     public class HomeController : Controller
     {
         Context dbcontext = new Context();
-        Uyeler YeniUye = new Uyeler();
-        Randevu YeniRandevu = new Randevu();
+
         public ActionResult Index()
         {
             return View();
@@ -41,6 +42,7 @@ namespace WebApplication3.Controllers
 
         public ActionResult RandevuVer()
         {
+            List<HizmetEkle> hizmetekle = dbcontext.HizmetEkle.ToList();
             // Veritabanından SysAktifi 1 olan Uyeler tablosundaki verileri çekme
             List<Uyeler> uyeler = dbcontext.Uyeler.Where(u => u.SysAktif == 1).ToList();
 
@@ -54,7 +56,7 @@ namespace WebApplication3.Controllers
             // ViewBag aracılığıyla ViewBag.Uyeler adında bir SelectList oluşturup, bu SelectList'i View'e gönderme
             ViewBag.Uyeler = new SelectList(uyeListesi, "Value", "Text");
 
-            return View();
+            return View(hizmetekle);
         }
 
 
@@ -69,14 +71,13 @@ namespace WebApplication3.Controllers
                     UyeID = model.UyeID,
                     RandevuBaslangicTarihi = model.RandevuBaslangicTarihi,
                     RandevuHizmetSuresi = model.RandevuHizmetSuresi,
-                    ChckBxSecimleri = model.ChckBxSecimleri,
                     NotAciklama = model.NotAciklama,
+                    ChckBxSecimleri = model.ChckBxSecimleri,
                     SysAktif = 1,
                     RandevuKayıtTarihi = DateTime.Now,
                     RandevuKaydedenPersonel = "Admin",
                     RandevuGuncellenmeTarihi = DateTime.Now,
                     RandevuGuncelleyenPersonel = "Admin",
-
                 };
 
                 // Oluşturulan randevu kaydını veritabanına ekleyin
@@ -84,7 +85,7 @@ namespace WebApplication3.Controllers
                 dbcontext.SaveChanges();
 
                 // Başka bir işlem yapabilir veya bir başka sayfaya yönlendirebilirsiniz
-                return RedirectToAction("Index");
+                return RedirectToAction("RandevuVer");
             }
 
             // ModelState.IsValid false olduğunda, yani formda doğrulama hataları varsa, aynı View'i tekrar göster
@@ -102,17 +103,20 @@ namespace WebApplication3.Controllers
         [HttpPost]
         public ActionResult UyeKaydıYap(FormCollection myform)
         {
-            YeniUye.UyeAdi = myform["UyeAdi"].ToString().Trim();
-            YeniUye.UyeSoyadi = myform["UyeSoyadi"].ToString().Trim();
-            YeniUye.UyeTelNo = myform["UyeTelNo"].Trim();
-            YeniUye.UyeTcNo = myform["UyeTcNo"]?.Trim();
-            YeniUye.UyeMaili = myform["UyeMaili"]?.ToString().Trim();
-            YeniUye.UyeOzelNotu = myform["UyeOzelNotu"]?.ToString().Trim();
-            YeniUye.SysAktif = 1;
-            YeniUye.UyeEklenmeTarihi = DateTime.Now;
-            YeniUye.UyeEkleyenPersonel = "Admin";
-            YeniUye.UyeGuncellenmeTarihi = DateTime.Now;
-            YeniUye.UyeGuncelleyenPersonel = "Admin";
+            Uyeler YeniUye = new Uyeler();
+            {
+                YeniUye.UyeAdi = myform["UyeAdi"].ToString().Trim();
+                YeniUye.UyeSoyadi = myform["UyeSoyadi"].ToString().Trim();
+                YeniUye.UyeTelNo = myform["UyeTelNo"].Trim();
+                YeniUye.UyeTcNo = myform["UyeTcNo"]?.Trim();
+                YeniUye.UyeMaili = myform["UyeMaili"]?.ToString().Trim();
+                YeniUye.UyeOzelNotu = myform["UyeOzelNotu"]?.ToString().Trim();
+                YeniUye.SysAktif = 1;
+                YeniUye.UyeEklenmeTarihi = DateTime.Now;
+                YeniUye.UyeEkleyenPersonel = "Admin";
+                YeniUye.UyeGuncellenmeTarihi = DateTime.Now;
+                YeniUye.UyeGuncelleyenPersonel = "Admin";
+            };
 
             dbcontext.Uyeler.Add(YeniUye);
             dbcontext.SaveChanges();
@@ -219,6 +223,125 @@ namespace WebApplication3.Controllers
             return View("Uyeler", model); // Aynı sayfaya geri dön ve hataları göster
         }
 
+        [HttpGet]
+        public ActionResult HizmetEkle()
+        {
+            var hizmetListesi = dbcontext.HizmetEkle.ToList();
+            return View(hizmetListesi);
+        }
+
+        [HttpPost]
+        public ActionResult HizmetEkle(HizmetEkle model)
+        {
+            if (ModelState.IsValid)
+            {
+                HizmetEkle yeniHizmet = new HizmetEkle
+                {
+                    HizmetAdi = model.HizmetAdi,
+                    HizmetBedeli = model.HizmetBedeli,
+                    SysAktif = 1,
+                    HizmetEklenmeTarihi = DateTime.Now,
+                    HizmetEkleyenPersonel = "Admin",
+                    HizmetGuncellenmeTarihi = DateTime.Now,
+                    HizmetGuncelleyenPersonel = "Admin"
+                };
+
+                dbcontext.HizmetEkle.Add(yeniHizmet);
+                dbcontext.SaveChanges();
+
+                return RedirectToAction("HizmetEkle");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult HizmetGuncelle(HizmetEkle model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var existingHizmet = dbcontext.HizmetEkle.FirstOrDefault(h => h.Id == model.Id);
+
+                    if (existingHizmet != null)
+                    {
+                        existingHizmet.HizmetAdi = model.HizmetAdi;
+                        existingHizmet.HizmetBedeli = model.HizmetBedeli;
+                        existingHizmet.HizmetGuncellenmeTarihi = DateTime.Now;
+                        existingHizmet.HizmetGuncelleyenPersonel = "Admin";
+
+                        dbcontext.SaveChanges();
+
+                        return RedirectToAction("HizmetEkle");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Hizmet bulunamadı.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda loglama veya hata mesajını kontrol etme
+                ModelState.AddModelError("", "Bir hata oluştu: " + ex.Message);
+            }
+
+            return View("HizmetEkle", model);
+        }
+
+
+        [HttpPost]
+        public ActionResult HizmetPasif(HizmetEkle model)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingHizmet = dbcontext.HizmetEkle.FirstOrDefault(h => h.Id == model.Id);
+
+                if (existingHizmet != null)
+                {
+                    existingHizmet.SysAktif = 0;
+                    existingHizmet.HizmetGuncellenmeTarihi = DateTime.Now;
+                    existingHizmet.HizmetGuncelleyenPersonel = "Admin";
+
+                    dbcontext.SaveChanges();
+
+                    return RedirectToAction("HizmetEkle");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Hizmet bulunamadı.");
+                }
+            }
+
+            return View("HizmetEkle", model);
+        }
+
+        [HttpPost]
+        public ActionResult HizmetAktif(HizmetEkle model)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingHizmet = dbcontext.HizmetEkle.FirstOrDefault(h => h.Id == model.Id);
+
+                if (existingHizmet != null)
+                {
+                    existingHizmet.SysAktif = 1;
+                    existingHizmet.HizmetGuncellenmeTarihi = DateTime.Now;
+                    existingHizmet.HizmetGuncelleyenPersonel = "Admin";
+
+                    dbcontext.SaveChanges();
+
+                    return RedirectToAction("HizmetEkle");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Hizmet bulunamadı.");
+                }
+            }
+
+            return View("HizmetEkle", model);
+        }
 
         public ActionResult Contact()
         {

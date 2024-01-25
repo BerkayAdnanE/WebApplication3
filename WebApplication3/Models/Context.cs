@@ -15,5 +15,6 @@ namespace WebApplication3.Models
         }
         public DbSet<Uyeler> Uyeler { get; set; }
         public DbSet<Randevu> Randevu { get; set; }
+        public DbSet<HizmetEkle> HizmetEkle { get; set; }
     }
 }
